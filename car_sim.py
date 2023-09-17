@@ -2,7 +2,7 @@
 import pygame
 import time
 
-snake_speed = 15
+car_speed = 15
 
 # Window size
 window_x = 720
@@ -26,37 +26,26 @@ game_window = pygame.display.set_mode((window_x, window_y))
 fps = pygame.time.Clock()
 
 # defining snake default position
-snake_position = [100, 50]
+car_position = [100, 50]
 
-# defining first 4 blocks of snake body
-snake_body = [[100, 50],
-			[90, 50],
-			[80, 50],
-			[70, 50]
-			]
+# defining car graphic
+car_body = [[100, 50]]
 
-# setting default snake direction towards
-# right
-direction = 'RIGHT'
+# setting default car direction towards right
+direction = 'STATIONARY'
 change_to = direction
+
+key_events = {pygame.K_UP: 'UP', 
+			  pygame.K_DOWN: 'DOWN',
+			  pygame.K_LEFT: 'LEFT',
+			  pygame.K_RIGHT: 'RIGHT'}
 
 # game over function
 def game_over():
-
-	# creating font object my_font
-	my_font = pygame.font.SysFont('times new roman', 50)
-	
-	pygame.display.flip()
-	
-	# after 2 seconds we will quit the program
-	time.sleep(2)
-	
-	# deactivating pygame library
+	# after 1 second, quit the program
+	time.sleep(1)
 	pygame.quit()
-	
-	# quit the program
 	quit()
-
 
 # Main Function
 while True:
@@ -64,17 +53,16 @@ while True:
 	# handling key events
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_UP:
-				change_to = 'UP'
-			if event.key == pygame.K_DOWN:
-				change_to = 'DOWN'
-			if event.key == pygame.K_LEFT:
-				change_to = 'LEFT'
-			if event.key == pygame.K_RIGHT:
-				change_to = 'RIGHT'
+			if key_events[event.key] == change_to:
+				car_speed += 15
+				print('increasing the speed')
+			else:
+				car_speed = 15
+				print('changing direction')
+				change_to = key_events[event.key]		
 
 	# If two keys pressed simultaneously
-	# we don't want snake to move into two
+	# we don't want car to move into two
 	# directions simultaneously
 	if change_to == 'UP' and direction != 'DOWN':
 		direction = 'UP'
@@ -85,38 +73,35 @@ while True:
 	if change_to == 'RIGHT' and direction != 'LEFT':
 		direction = 'RIGHT'
 
-	# Moving the snake
+	# Moving the car
 	if direction == 'UP':
-		snake_position[1] -= 10
+		car_position[1] -= 2
 	if direction == 'DOWN':
-		snake_position[1] += 10
+		car_position[1] += 2
 	if direction == 'LEFT':
-		snake_position[0] -= 10
+		car_position[0] -= 2
 	if direction == 'RIGHT':
-		snake_position[0] += 10
+		car_position[0] += 2
+	if direction == 'STATIONARY':
+		car_position[0] = 0
 
-	snake_body.insert(0, list(snake_position))
-	snake_body.pop()
+	car_body.insert(0, list(car_position))
+	car_body.pop()
 
 	game_window.fill(black)
 	
-	for pos in snake_body:
+	for pos in car_body:
 		pygame.draw.rect(game_window, green,
 						pygame.Rect(pos[0], pos[1], 10, 10))
 
 	# Game Over conditions
-	if snake_position[0] < 0 or snake_position[0] > window_x-10:
+	if car_position[0] < 0 or car_position[0] > window_x-10:
 		game_over()
-	if snake_position[1] < 0 or snake_position[1] > window_y-10:
+	if car_position[1] < 0 or car_position[1] > window_y-10:
 		game_over()
-
-	# Touching the snake body
-	for block in snake_body[1:]:
-		if snake_position[0] == block[0] and snake_position[1] == block[1]:
-			game_over()
 
 	# Refresh game screen
 	pygame.display.update()
 
-	# Frame Per Second /Refresh Rate
-	fps.tick(snake_speed)
+	# Frame Per Second / Refresh Rate
+	fps.tick(car_speed)
