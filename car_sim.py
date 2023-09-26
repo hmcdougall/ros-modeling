@@ -30,12 +30,12 @@ game_window = pygame.display.set_mode((window_x, window_y))
 fps = pygame.time.Clock()
 
 # defining car default position
-car_position = [100, 50]
+car_position = [(window_x/2), (window_y/2)]
 
 # car graphic
 car_body = pygame.image.load('car.png').convert_alpha()
+car = pygame.transform.rotate(car_body, theta)
 screen = pygame.display.set_mode([800,500])
-# pygame.display.flip()
 
 # setting default car direction towards right
 direction = 'STATIONARY'
@@ -45,7 +45,7 @@ key_events = {pygame.K_UP: 'UP',
 			  pygame.K_DOWN: 'DOWN',
 			  pygame.K_LEFT: 'LEFT',
 			  pygame.K_RIGHT: 'RIGHT',
-			  pygame.K_SPACE: 'STATIONARY'}
+			  pygame.K_SPACE: 'STATIONARY'} 
 
 # game over function
 def game_over():
@@ -74,32 +74,30 @@ while True:
 	# If two keys pressed simultaneously
 	# we don't want car to move into two
 	# directions simultaneously
-	if change_to == 'UP' and direction != 'DOWN':
+	if change_to == 'UP':
 		direction = 'UP'
-	if change_to == 'DOWN' and direction != 'UP':
+	elif change_to == 'DOWN':
 		direction = 'DOWN'
-	if change_to == 'LEFT' and direction != 'RIGHT':
-		direction = 'LEFT'
-	if change_to == 'RIGHT' and direction != 'LEFT':
-		direction = 'RIGHT'
+	elif change_to == 'STATIONARY':
+		0 # todo
+	elif change_to == 'LEFT' or change_to == 'RIGHT':
+		if change_to == 'LEFT':
+			theta += angle_turn
+		else:
+			theta -= angle_turn
+		change_to = "NONE"
+		car = pygame.transform.rotate(car_body, theta)
 
 	# Moving the car
 	if direction == 'UP':
 		car_position[1] -= unit_vec * math.cos(math.radians(theta))
-		car_position[0] += unit_vec * math.sin(math.radians(theta))
+		car_position[0] -= unit_vec * math.sin(math.radians(theta))
 	if direction == 'DOWN':
 		car_position[1] += unit_vec * math.cos(math.radians(theta))
 		car_position[0] += unit_vec * math.sin(math.radians(theta))
-	if direction == 'LEFT':
-		theta -= angle_turn
-	if direction == 'RIGHT':
-		theta += angle_turn
-	# if direction == 'STATIONARY':
-	# 	car_position[0] += 0
-	# 	car_position[1] +=0
 
 	game_window.fill(black)
-	screen.blit(car_body, (car_position[0],car_position[1]))
+	screen.blit(car, (car_position[0],car_position[1]))
     
 	pygame.display.flip()
 
