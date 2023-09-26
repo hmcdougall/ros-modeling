@@ -1,8 +1,12 @@
 # importing libraries
 import pygame
 import time
+import math
 
 car_speed = 15
+unit_vec = 2
+theta = 0
+angle_turn = 15
 
 # Window size
 window_x = 720
@@ -25,11 +29,13 @@ game_window = pygame.display.set_mode((window_x, window_y))
 # FPS (frames per second) controller
 fps = pygame.time.Clock()
 
-# defining snake default position
+# defining car default position
 car_position = [100, 50]
 
-# defining car graphic
-car_body = [[100, 50]]
+# car graphic
+car_body = pygame.image.load('car.png').convert_alpha()
+screen = pygame.display.set_mode([800,500])
+# pygame.display.flip()
 
 # setting default car direction towards right
 direction = 'STATIONARY'
@@ -38,7 +44,8 @@ change_to = direction
 key_events = {pygame.K_UP: 'UP', 
 			  pygame.K_DOWN: 'DOWN',
 			  pygame.K_LEFT: 'LEFT',
-			  pygame.K_RIGHT: 'RIGHT'}
+			  pygame.K_RIGHT: 'RIGHT',
+			  pygame.K_SPACE: 'STATIONARY'}
 
 # game over function
 def game_over():
@@ -53,7 +60,10 @@ while True:
 	# handling key events
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
-			if key_events[event.key] == change_to:
+			if key_events[event.key] == "STATIONARY":
+				car_speed = 0
+				print('stop')
+			elif key_events[event.key] == change_to:
 				car_speed += 15
 				print('increasing the speed')
 			else:
@@ -75,24 +85,23 @@ while True:
 
 	# Moving the car
 	if direction == 'UP':
-		car_position[1] -= 2
+		car_position[1] -= unit_vec * math.cos(math.radians(theta))
+		car_position[0] += unit_vec * math.sin(math.radians(theta))
 	if direction == 'DOWN':
-		car_position[1] += 2
+		car_position[1] += unit_vec * math.cos(math.radians(theta))
+		car_position[0] += unit_vec * math.sin(math.radians(theta))
 	if direction == 'LEFT':
-		car_position[0] -= 2
+		theta -= angle_turn
 	if direction == 'RIGHT':
-		car_position[0] += 2
-	if direction == 'STATIONARY':
-		car_position[0] = 0
-
-	car_body.insert(0, list(car_position))
-	car_body.pop()
+		theta += angle_turn
+	# if direction == 'STATIONARY':
+	# 	car_position[0] += 0
+	# 	car_position[1] +=0
 
 	game_window.fill(black)
-	
-	for pos in car_body:
-		pygame.draw.rect(game_window, green,
-						pygame.Rect(pos[0], pos[1], 10, 10))
+	screen.blit(car_body, (car_position[0],car_position[1]))
+    
+	pygame.display.flip()
 
 	# Game Over conditions
 	if car_position[0] < 0 or car_position[0] > window_x-10:
