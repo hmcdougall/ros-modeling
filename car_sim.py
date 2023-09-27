@@ -6,7 +6,7 @@ import math
 car_speed = 15
 unit_vec = 2
 theta = 0
-angle_turn = 15
+angle_turn = 8
 
 # Window size
 window_x = 720
@@ -36,6 +36,9 @@ car_position = [(window_x/2), (window_y/2)]
 car_body = pygame.image.load('car.png').convert_alpha()
 car = pygame.transform.rotate(car_body, theta)
 screen = pygame.display.set_mode([800,500])
+offset = -20
+offset_vector_x = 0
+offset_vector_y = -20
 
 # setting default car direction towards right
 direction = 'STATIONARY'
@@ -53,6 +56,18 @@ def game_over():
 	time.sleep(1)
 	pygame.quit()
 	quit()
+
+def rotate():
+	car = pygame.transform.rotate(car_body, theta)
+
+	# calculate new offset vector 
+	offset_vector_x = offset * math.sin(math.radians(theta))
+	offset_vector_y = offset * math.cos(math.radians(theta))
+
+    # Add the offset vector to the pivot point
+	car_position[1] += offset_vector_y
+	car_position[0] += offset_vector_x
+	return car
 
 # Main Function
 while True:
@@ -86,7 +101,9 @@ while True:
 		else:
 			theta -= angle_turn
 		change_to = "NONE"
-		car = pygame.transform.rotate(car_body, theta)
+		# car = pygame.transform.rotate(car_body, theta)
+		car = rotate()
+
 
 	# Moving the car
 	if direction == 'UP':
@@ -98,6 +115,7 @@ while True:
 
 	game_window.fill(black)
 	screen.blit(car, (car_position[0],car_position[1]))
+	pygame.draw.circle(game_window, blue, (window_x/2, window_y/2+20), 1)
     
 	pygame.display.flip()
 
