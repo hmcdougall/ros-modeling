@@ -1,0 +1,2 @@
+ackermann_vehicle/ackermann_vehicle:ackermann_vehicle/ackermann_vehicle_description:ackermann_vehicle/ackermann_vehicle_gazebo:ackermann_vehicle/ackermann_vehicle_navigation
+-DCATKIN_DEVEL_PREFIX=/home/robot0/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/robot0/catkin_ws/install -G Unix Makefiles
